@@ -2,6 +2,7 @@ import { useRef, useEffect } from "react";
 import gsap from "gsap";
 
 import { useScrollTween } from "../scroll/ScrollContext";
+import TiltCard from "../ui/TiltCard";
 
 export default function BiomeTwo() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -52,28 +53,28 @@ export default function BiomeTwo() {
       <div className="absolute bottom-20 left-1/4 right-1/4 h-32 bg-deep-teal/40 rounded-[100%] blur-3xl -z-10" />
 
       {/* SMIT Book Pickup */}
-      <div ref={smitCardRef} className="w-80 p-6 bg-charcoal/80 backdrop-blur-md rounded-2xl border border-cream-paper/20 shadow-2xl">
+      <TiltCard ref={smitCardRef} className="w-80 p-6 bg-charcoal/80 backdrop-blur-md rounded-2xl border border-cream-paper/20 shadow-2xl">
         <div className="w-16 h-16 mb-4 flex items-center justify-center">
           <img src={`${import.meta.env.BASE_URL}assets/book.png`} alt="Book" className="w-full h-full object-contain drop-shadow-lg" />
         </div>
         <h3 className="font-display text-2xl text-cream-paper mb-2">SMIT</h3>
         <p className="font-mono text-sm text-cream-paper/70">
           Sikkim Manipal Institute of Technology<br />
-          BBA, Marketing & Finance (2021–2025)
+          Bachelor of Commerce
         </p>
-      </div>
+      </TiltCard>
 
       {/* DPS Book Pickup */}
-      <div ref={dpsCardRef} className="w-80 p-6 bg-charcoal/80 backdrop-blur-md rounded-2xl border border-cream-paper/20 shadow-2xl mt-48">
+      <TiltCard ref={dpsCardRef} className="w-80 p-6 bg-charcoal/80 backdrop-blur-md rounded-2xl border border-cream-paper/20 shadow-2xl mt-48">
         <div className="w-16 h-16 mb-4 flex items-center justify-center">
           <img src={`${import.meta.env.BASE_URL}assets/book.png`} alt="Book" className="w-full h-full object-contain drop-shadow-lg hue-rotate-90" />
         </div>
         <h3 className="font-display text-2xl text-cream-paper mb-2">DPS Siliguri</h3>
         <p className="font-mono text-sm text-cream-paper/70">
           Higher Secondary<br />
-          (2019–2021)
+          Commerce
         </p>
-      </div>
+      </TiltCard>
 
     </section>
   );

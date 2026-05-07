@@ -1,9 +1,11 @@
 import { useRef, useEffect } from "react";
 import gsap from "gsap";
 import { useScrollTween } from "../scroll/ScrollContext";
+import TiltCard from "../ui/TiltCard";
 
 export default function BiomeFour() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLParagraphElement>(null);
   const tween = useScrollTween();
 
@@ -40,23 +42,25 @@ export default function BiomeFour() {
 
   return (
     <section ref={containerRef} className="relative w-[150vw] h-full flex items-center justify-center shrink-0 z-10 pointer-events-auto px-20">
-      <div className="w-full max-w-4xl p-12 bg-midnight-ink/80 border border-mint-highlight/30 rounded-lg backdrop-blur-md relative overflow-hidden">
-        {/* Cyberpunk Code Rain Placeholder */}
-        <div className="absolute inset-0 opacity-10 font-mono text-xs text-mint-highlight whitespace-pre overflow-hidden flex flex-col justify-center select-none pointer-events-none">
-          {Array.from({length: 20}).map((_, i) => (
-            <div key={i} className="animate-pulse" style={{ animationDelay: `${i * 0.1}s` }}>
-              01010101 01101011 01100101 01111001 01110111 01101111 01110010 01100100
+      <TiltCard ref={cardRef} className="relative z-10 w-full max-w-xl bg-charcoal/90 backdrop-blur-xl border border-mint-highlight/20 p-12 rounded-3xl shadow-[0_20px_50px_rgba(0,255,200,0.15)]">
+        <div className="flex items-center gap-4 mb-8">
+          <div className="w-12 h-12 bg-mint-highlight rounded-lg flex items-center justify-center text-charcoal font-bold text-2xl">M</div>
+          <h2 className="font-display text-4xl text-cream-paper">MyDigital.io</h2>
+        </div>
+        <h3 className="font-sans text-xl text-cream-paper mb-8">AI Content & Copywriter • Mar–May 2024</h3>
+        
+        <p ref={textRef} className="font-mono text-2xl text-cream-paper leading-relaxed mb-8">
+          "Keyword-density-optimized copy with high CTR."
+        </p>
+
+        <div className="grid grid-cols-2 gap-4">
+          {["Performance", "Search", "Optimization", "Growth"].map((tag) => (
+            <div key={tag} className="px-4 py-3 bg-mint-highlight/5 border border-mint-highlight/20 rounded-xl font-mono text-xs text-mint-highlight uppercase tracking-wider text-center">
+              {tag}
             </div>
           ))}
         </div>
-
-        <h2 className="font-display text-4xl text-mint-highlight mb-4 relative z-10">My Digital.io</h2>
-        <h3 className="font-sans text-xl text-cream-paper mb-8 relative z-10">AI Content & Copywriter • Mar–May 2024</h3>
-        
-        <p ref={textRef} className="font-mono text-2xl text-cream-paper leading-relaxed relative z-10">
-          "Keyword-density-optimized copy with high CTR."
-        </p>
-      </div>
+      </TiltCard>
     </section>
   );
 }

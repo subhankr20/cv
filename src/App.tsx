@@ -10,24 +10,28 @@ import AudioToggle from "@/components/ui/AudioToggle";
 import PixiScene from "@/components/canvas/PixiScene";
 import LenisProvider from "@/components/scroll/LenisProvider";
 
+import { SoundProvider } from "@/components/audio/SoundManager";
+
 function App() {
   return (
-    <LenisProvider>
-      <main className="relative w-full">
-        <div className="noise-overlay" />
-        <AudioToggle />
-        <PixiScene />
-        <ScrollScene>
-          <BiomeOne />
-          <BiomeTwo />
-          <BiomeThree />
-          <BiomeFour />
-          <BiomeFive />
-          <BiomeSix />
-          <BiomeSeven />
-        </ScrollScene>
-      </main>
-    </LenisProvider>
+    <SoundProvider>
+      <LenisProvider>
+        <main className="relative w-full">
+          <div className="noise-overlay" />
+          <AudioToggle />
+          <PixiScene />
+          <ScrollScene>
+            <BiomeOne />
+            <BiomeTwo />
+            <BiomeThree />
+            <BiomeFour />
+            <BiomeFive />
+            <BiomeSix />
+            <BiomeSeven />
+          </ScrollScene>
+        </main>
+      </LenisProvider>
+    </SoundProvider>
   );
 }
 

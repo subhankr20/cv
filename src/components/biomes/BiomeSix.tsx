@@ -1,6 +1,7 @@
 import { useRef, useEffect } from "react";
 import gsap from "gsap";
 import { useScrollTween } from "../scroll/ScrollContext";
+import TiltCard from "../ui/TiltCard";
 
 export default function BiomeSix() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -42,13 +43,13 @@ export default function BiomeSix() {
         {/* Placeholder screens inside the tower */}
         {Array.from({length: 6}).map((_, i) => (
           <div key={i} className="w-full h-32 bg-midnight-ink rounded-lg border border-cream-paper/10 flex items-center justify-center opacity-50">
-            <span className="text-4xl animate-pulse delay-[{i*100}ms]">📱</span>
+             <span className="text-4xl animate-pulse delay-[{i*100}ms]">📱</span>
           </div>
         ))}
       </div>
 
       {/* Counter UI overlay */}
-      <div className="relative z-20 text-center bg-midnight-ink/80 p-12 rounded-3xl backdrop-blur-xl border border-viral-red/50 shadow-2xl">
+      <TiltCard className="relative z-20 text-center bg-midnight-ink/80 p-12 rounded-3xl backdrop-blur-xl border border-viral-red/50 shadow-2xl">
         <h2 className="font-display text-2xl text-cream-paper mb-4 uppercase tracking-widest">Viral Valley</h2>
         <div className="font-mono text-7xl md:text-9xl text-viral-red font-bold tracking-tighter drop-shadow-lg mb-6">
           <span ref={counterRef}>0</span>
@@ -56,7 +57,7 @@ export default function BiomeSix() {
         <p className="font-sans text-xl max-w-lg mx-auto text-cream-paper/80">
           Social Media Content Manager • Hit 2.3M cumulative views across two viral videos. Collabs with major meme creators.
         </p>
-      </div>
+      </TiltCard>
 
     </section>
   );

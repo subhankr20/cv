@@ -1,9 +1,11 @@
 import { useRef, useEffect } from "react";
 import gsap from "gsap";
 import { useScrollTween } from "../scroll/ScrollContext";
+import TiltCard from "../ui/TiltCard";
 
 export default function BiomeFive() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const playheadRef = useRef<HTMLDivElement>(null);
   const tween = useScrollTween();
 
@@ -31,11 +33,16 @@ export default function BiomeFive() {
   return (
     <section ref={containerRef} className="relative w-[150vw] h-full flex flex-col items-center justify-center shrink-0 z-10 pointer-events-auto px-20">
       
-      <div className="absolute top-1/4 left-32">
-        <h2 className="font-display text-4xl text-viral-red mb-2">Hanwong International</h2>
+      <TiltCard ref={cardRef} className="relative z-10 w-full max-w-xl bg-midnight-ink/80 backdrop-blur-md border border-afternoon-gold/30 p-12 rounded-2xl shadow-2xl overflow-hidden">
+        {/* Film grain effect */}
+        <div className="absolute inset-0 opacity-20 pointer-events-none mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+        
+        <h2 className="font-display text-4xl text-cream-paper mb-4 relative z-10">Hanwong International</h2>
         <p className="font-mono text-cream-paper/70">Video Creator & Editor • 2024–2025 (Freelance)</p>
-        <p className="font-sans text-lg mt-4 max-w-md">Direction-based, data-driven content edits.</p>
-      </div>
+        <p className="font-sans text-sm text-afternoon-gold/60 uppercase tracking-[0.2em] relative z-10">
+          Professional Editor & Content Creator
+        </p>
+      </TiltCard>
 
       {/* Premiere Pro style timeline placeholder */}
       <div className="w-[80vw] h-64 bg-[#1e1e1e] border border-[#333] rounded-lg mt-32 relative overflow-hidden flex flex-col pt-8">

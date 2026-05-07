@@ -1,6 +1,7 @@
 import { useRef, useEffect } from "react";
 import gsap from "gsap";
 import { useScrollTween } from "../scroll/ScrollContext";
+import TiltCard from "../ui/TiltCard";
 
 export default function BiomeThree() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -55,17 +56,17 @@ export default function BiomeThree() {
           { ref: door2Ref, label: "Sales Increase" },
           { ref: door3Ref, label: "Interactions" }
         ].map((door, i) => (
-          <div key={i} ref={door.ref} className="group relative w-64 h-96 bg-charcoal border-4 border-deep-teal rounded-t-xl flex items-center justify-center overflow-hidden shadow-2xl">
+          <TiltCard key={i} className="group relative w-64 h-96 bg-charcoal border-4 border-deep-teal rounded-t-xl flex items-center justify-center overflow-hidden shadow-2xl">
             {/* Door front sprite that "opens" on scroll */}
-            <div className="absolute inset-0 z-30 transition-transform duration-700 group-hover:-translate-x-full group-hover:opacity-0 origin-left">
+            <div ref={door.ref} className="absolute inset-0 z-30 transition-transform duration-700 group-hover:-translate-x-full group-hover:opacity-0 origin-left">
                <img src={`${import.meta.env.BASE_URL}assets/door.png`} className="w-full h-full object-cover" alt="Door" />
             </div>
             
             <div className="text-center z-10">
               <div className="counter-value font-mono text-5xl text-mint-highlight font-bold mb-4">0</div>
-              <div className="text-cream-paper uppercase tracking-wider text-sm font-bold">{door.label}</div>
+              <p className="font-sans text-xs text-cream-paper/50 uppercase tracking-widest">{door.label}</p>
             </div>
-          </div>
+          </TiltCard>
         ))}
       </div>
     </section>
