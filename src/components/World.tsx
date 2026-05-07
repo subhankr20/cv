@@ -1,12 +1,14 @@
-import { useState, useCallback } from 'react'
-import { Canvas } from '@react-three/fiber'
+import { useState, useCallback, useRef, useEffect } from 'react'
+import { Canvas, useThree } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
+import gsap from 'gsap'
 import Island from './Island'
 import SkyDome from './SkyDome'
 import Character from './Character'
 import PulseRing from './PulseRing'
 import Particles from './Particles'
+import PhoneBooth from './landmarks/PhoneBooth'
 import { useWorld } from '@/store/useWorld'
 
 function ClickGround() {
@@ -54,6 +56,62 @@ function ClickGround() {
   )
 }
 
+function CameraController() {
+  const mode = useWorld(state => state.mode)
+  const controlsRef = useRef<any>(null)
+  const { camera } = useThree()
+
+  useEffect(() => {
+    if (mode === 'contact') {
+      if (controlsRef.current) controlsRef.current.enabled = false
+      gsap.to(camera.position, {
+        x: -7,
+        y: 3.5,
+        z: 7,
+        duration: 1.2,
+        ease: 'power2.inOut'
+      })
+      gsap.to(controlsRef.current.target, {
+        x: -10,
+        y: 2.5,
+        z: 10,
+        duration: 1.2,
+        ease: 'power2.inOut'
+      })
+    } else {
+      if (controlsRef.current) controlsRef.current.enabled = true
+      gsap.to(camera.position, {
+        x: 18,
+        y: 14,
+        z: 18,
+        duration: 1.2,
+        ease: 'power2.inOut'
+      })
+      gsap.to(controlsRef.current.target, {
+        x: 0,
+        y: 2,
+        z: 0,
+        duration: 1.2,
+        ease: 'power2.inOut'
+      })
+    }
+  }, [mode, camera])
+
+  return (
+    <OrbitControls
+      ref={controlsRef}
+      enablePan={false}
+      minDistance={8}
+      maxDistance={40}
+      minPolarAngle={Math.PI * 0.15}
+      maxPolarAngle={Math.PI * 0.45}
+      enableDamping
+      dampingFactor={0.05}
+      target={[0, 2, 0]}
+    />
+  )
+}
+
 export default function World() {
   return (
     <Canvas
@@ -93,17 +151,11 @@ export default function World() {
       <Character />
       <ClickGround />
       <Particles />
+      
+      {/* Landmarks */}
+      <PhoneBooth position={[-10, 0, 10]} />
 
-      <OrbitControls
-        enablePan={false}
-        minDistance={12}
-        maxDistance={40}
-        minPolarAngle={Math.PI * 0.15}
-        maxPolarAngle={Math.PI * 0.45}
-        enableDamping
-        dampingFactor={0.05}
-        target={[0, 2, 0]}
-      />
+      <CameraController />
     </Canvas>
   )
 }
