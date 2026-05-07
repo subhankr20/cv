@@ -48,11 +48,13 @@ export default function BiomeSeven() {
   return (
     <section ref={containerRef} className="relative w-[150vw] h-full flex items-center justify-center shrink-0 z-10 pointer-events-auto overflow-hidden px-12">
       
-      {/* Giant HIRE ME Portal Placeholder */}
-      <div ref={portalRef} className="absolute inset-0 m-auto w-96 h-96 border-[12px] border-sunset-coral rounded-full flex items-center justify-center shadow-[0_0_150px_rgba(255,138,91,0.6)]">
-        <span className="font-display text-5xl text-sunset-coral uppercase tracking-widest animate-pulse">
-          Hire Me
-        </span>
+      {/* Giant HIRE ME Portal Sprite */}
+      <div ref={portalRef} className="absolute inset-0 m-auto w-[600px] h-[600px] flex items-center justify-center">
+        <img 
+          src={`${import.meta.env.BASE_URL}assets/portal.png`} 
+          alt="Portal" 
+          className="w-full h-full object-contain drop-shadow-[0_0_50px_rgba(255,215,0,0.5)] animate-pulse" 
+        />
       </div>
 
       {/* The Final Modal */}

@@ -53,7 +53,9 @@ export default function BiomeTwo() {
 
       {/* SMIT Book Pickup */}
       <div ref={smitCardRef} className="w-80 p-6 bg-charcoal/80 backdrop-blur-md rounded-2xl border border-cream-paper/20 shadow-2xl">
-        <div className="w-12 h-12 bg-afternoon-gold rounded-lg mb-4 flex items-center justify-center text-charcoal font-bold text-2xl">📘</div>
+        <div className="w-16 h-16 mb-4 flex items-center justify-center">
+          <img src={`${import.meta.env.BASE_URL}assets/book.png`} alt="Book" className="w-full h-full object-contain drop-shadow-lg" />
+        </div>
         <h3 className="font-display text-2xl text-cream-paper mb-2">SMIT</h3>
         <p className="font-mono text-sm text-cream-paper/70">
           Sikkim Manipal Institute of Technology<br />
@@ -63,7 +65,9 @@ export default function BiomeTwo() {
 
       {/* DPS Book Pickup */}
       <div ref={dpsCardRef} className="w-80 p-6 bg-charcoal/80 backdrop-blur-md rounded-2xl border border-cream-paper/20 shadow-2xl mt-48">
-        <div className="w-12 h-12 bg-mint-highlight rounded-lg mb-4 flex items-center justify-center text-charcoal font-bold text-2xl">📗</div>
+        <div className="w-16 h-16 mb-4 flex items-center justify-center">
+          <img src={`${import.meta.env.BASE_URL}assets/book.png`} alt="Book" className="w-full h-full object-contain drop-shadow-lg hue-rotate-90" />
+        </div>
         <h3 className="font-display text-2xl text-cream-paper mb-2">DPS Siliguri</h3>
         <p className="font-mono text-sm text-cream-paper/70">
           Higher Secondary<br />

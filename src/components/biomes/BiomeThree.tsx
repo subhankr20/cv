@@ -55,9 +55,11 @@ export default function BiomeThree() {
           { ref: door2Ref, label: "Sales Increase" },
           { ref: door3Ref, label: "Interactions" }
         ].map((door, i) => (
-          <div key={i} ref={door.ref} className="group relative w-64 h-96 bg-charcoal border-4 border-deep-teal rounded-t-xl flex items-center justify-center overflow-hidden">
-            {/* Door front placeholder that "opens" on hover/scroll */}
-            <div className="absolute inset-0 bg-deep-teal origin-left transition-transform duration-700 group-hover:-rotate-y-90 group-hover:opacity-0" style={{ transformStyle: 'preserve-3d' }} />
+          <div key={i} ref={door.ref} className="group relative w-64 h-96 bg-charcoal border-4 border-deep-teal rounded-t-xl flex items-center justify-center overflow-hidden shadow-2xl">
+            {/* Door front sprite that "opens" on scroll */}
+            <div className="absolute inset-0 z-30 transition-transform duration-700 group-hover:-translate-x-full group-hover:opacity-0 origin-left">
+               <img src={`${import.meta.env.BASE_URL}assets/door.png`} className="w-full h-full object-cover" alt="Door" />
+            </div>
             
             <div className="text-center z-10">
               <div className="counter-value font-mono text-5xl text-mint-highlight font-bold mb-4">0</div>

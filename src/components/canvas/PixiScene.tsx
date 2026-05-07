@@ -1,40 +1,69 @@
-import { useState, useRef, useEffect } from "react";
-import { Stage, Container, Graphics, useTick } from "@pixi/react";
+import { useState, useRef, useEffect, useMemo } from "react";
+import { Stage, Container, TilingSprite, Sprite, useTick } from "@pixi/react";
 
+// We use import.meta.env.BASE_URL to ensure assets resolve correctly in GitHub Pages subpath
+const BASE_URL = import.meta.env.BASE_URL;
 
-// ParallaxLayers converted to a React component
-const PixiParallaxLayers = ({ scrollY }: { scrollY: number }) => {
-  const depths = [
-    { depth: 0.05, color: 0xFF8A5B, height: 600, yOffset: 0 },
-    { depth: 0.2, color: 0xFFD56B, height: 400, yOffset: 200 },
-    { depth: 0.5, color: 0x2D6A8F, height: 300, yOffset: 350 },
-    { depth: 1.0, color: 0x0F1B2D, height: 500, yOffset: 500 },
-    { depth: 1.4, color: 0x1A1A1A, height: 300, yOffset: 650 },
-  ];
+// ParallaxLayers using TilingSprite for infinite seamless scrolling
+const PixiParallaxLayers = ({ scrollY, windowWidth }: { scrollY: number, windowWidth: number }) => {
+  const biome1End = windowWidth * 2;
+  const biome2End = biome1End + windowWidth * 1.5;
+  const biome3End = biome2End + windowWidth * 2.0;
+  const biome4End = biome3End + windowWidth * 1.5;
+  const biome5End = biome4End + windowWidth * 1.5;
+  const biome6End = biome5End + windowWidth * 2.0;
+
+  const bgSet = useMemo(() => {
+    if (scrollY < biome1End) return "default";
+    if (scrollY < biome2End) return "classroom";
+    if (scrollY < biome3End) return "door";
+    if (scrollY < biome4End) return "catacombs";
+    if (scrollY < biome5End) return "studio";
+    if (scrollY < biome6End) return "viral";
+    return "default";
+  }, [scrollY, windowWidth, biome1End, biome2End, biome3End, biome4End, biome5End, biome6End]);
+
+  const layers = useMemo(() => {
+    const assets = {
+      default: { sky: "sky_layer.png", far: "far_layer.png", mid: "mid_layer.png", near: "near_layer.png", fg: "fg_layer.png" },
+      classroom: { sky: "sky_layer.png", far: "classroom_bg.png", mid: "mid_layer.png", near: "near_layer.png", fg: "fg_layer.png" },
+      door: { sky: "sky_layer.png", far: "door_bg.png", mid: "mid_layer.png", near: "near_layer.png", fg: "fg_layer.png" },
+      catacombs: { sky: "catacombs_bg.png", far: "catacombs_bg.png", mid: "catacombs_bg.png", near: "catacombs_bg.png", fg: "catacombs_bg.png" },
+      studio: { sky: "sky_layer.png", far: "studio_bg.png", mid: "mid_layer.png", near: "near_layer.png", fg: "fg_layer.png" },
+      viral: { sky: "sky_layer.png", far: "viral_bg.png", mid: "mid_layer.png", near: "near_layer.png", fg: "fg_layer.png" }
+    };
+    
+    const set = assets[bgSet as keyof typeof assets] || assets.default;
+
+    return [
+      { depth: 0.05, src: `${BASE_URL}assets/${set.sky}`, yOffset: -200, height: 1024 },
+      { depth: 0.2, src: `${BASE_URL}assets/${set.far}`, yOffset: 0, height: 1024 },
+      { depth: 0.5, src: `${BASE_URL}assets/${set.mid}`, yOffset: 200, height: 1024 },
+      { depth: 1.0, src: `${BASE_URL}assets/${set.near}`, yOffset: 400, height: 1024 },
+      { depth: 1.4, src: `${BASE_URL}assets/${set.fg}`, yOffset: 550, height: 1024 },
+    ];
+  }, [bgSet]);
 
   return (
     <Container>
-      {depths.map((d, i) => (
-        <Graphics
+      {layers.map((l, i) => (
+        <TilingSprite
           key={i}
-          x={-scrollY * d.depth}
-          y={d.yOffset}
-          draw={(g) => {
-            g.clear();
-            g.beginFill(d.color);
-            g.drawRect(0, 0, 20000, d.height);
-            g.endFill();
-          }}
+          image={l.src}
+          width={windowWidth}
+          height={l.height}
+          y={l.yOffset}
+          tilePosition={{ x: -scrollY * l.depth, y: 0 }}
         />
       ))}
     </Container>
   );
 };
 
-// Character Controller converted to React component
+// Character Controller using the generated sprite
 const PixiCharacter = ({ vScroll }: { vScroll: number }) => {
   const [y, setY] = useState(500);
-  const [scaleX, setScaleX] = useState(1);
+  const [scaleX, setScaleX] = useState(0.5); // Scale down the 1024x1024 generation
   const time = useRef(0);
 
   useTick((delta) => {
@@ -45,39 +74,36 @@ const PixiCharacter = ({ vScroll }: { vScroll: number }) => {
     if (absVelocity > 10) state = "running";
     else if (absVelocity > 0.5) state = "walking";
 
-    if (vScroll > 0) setScaleX(1);
-    else if (vScroll < 0) setScaleX(-1);
+    // Handle direction facing
+    if (vScroll > 0) setScaleX(0.5);
+    else if (vScroll < 0) setScaleX(-0.5);
 
+    // Dynamic bobbing based on speed
     switch (state) {
       case "idle": setY(500 + Math.sin(time.current * 0.05) * 5); break;
       case "walking": setY(500 + Math.sin(time.current * 0.2) * 10); break;
-      case "running": setY(500 + Math.sin(time.current * 0.4) * 15); break;
+      case "running": setY(500 + Math.sin(time.current * 0.4) * 20); break;
     }
   });
 
   return (
-    <Graphics
-      x={200}
+    <Sprite
+      image={`${BASE_URL}assets/character.png`}
+      x={250}
       y={y}
-      scale={[scaleX, 1]}
-      draw={(g) => {
-        g.clear();
-        g.beginFill(0xE63946);
-        g.drawRect(-30, -60, 60, 60);
-        g.endFill();
-      }}
+      anchor={0.5} // Center the anchor so scaling X to -1 flips cleanly
+      scale={{ x: scaleX, y: 0.5 }}
     />
   );
 };
 
 // Main Scene Coordinator
-const SceneCoordinator = () => {
+const SceneCoordinator = ({ windowWidth }: { windowWidth: number }) => {
   const [scrollY, setScrollY] = useState(0);
   const [vScroll, setVScroll] = useState(0);
   const lastScrollY = useRef(0);
 
   useEffect(() => {
-    // Initial sync
     lastScrollY.current = window.scrollY;
     setScrollY(window.scrollY);
   }, []);
@@ -91,7 +117,7 @@ const SceneCoordinator = () => {
 
   return (
     <Container>
-      <PixiParallaxLayers scrollY={scrollY} />
+      <PixiParallaxLayers scrollY={scrollY} windowWidth={windowWidth} />
       <PixiCharacter vScroll={vScroll} />
     </Container>
   );
@@ -122,7 +148,7 @@ export default function PixiScene() {
           autoDensity: true 
         }}
       >
-        <SceneCoordinator />
+        <SceneCoordinator windowWidth={dimensions.width} />
       </Stage>
     </div>
   );
