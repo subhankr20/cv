@@ -8,9 +8,17 @@ import SkyDome from './SkyDome'
 import Character from './Character'
 import PulseRing from './PulseRing'
 import Particles from './Particles'
+import WelcomeArch from './landmarks/WelcomeArch'
+import Library from './landmarks/Library'
+import DoorstepCulDeSac from './landmarks/DoorstepCulDeSac'
+import PenGarden from './landmarks/PenGarden'
+import DirectorsCut from './landmarks/DirectorsCut'
+import ViralShrine from './landmarks/ViralShrine'
 import PhoneBooth from './landmarks/PhoneBooth'
 import { useWorld } from '@/store/useWorld'
+import { GROUND_Y, ISLAND_RADIUS } from '@/constants'
 
+/* ── Click-to-move ground plane ──────────────────────────────── */
 function ClickGround() {
   const [rings, setRings] = useState<{ id: number; pos: THREE.Vector3 }[]>([])
 
@@ -18,37 +26,28 @@ function ClickGround() {
     e.stopPropagation()
     const point = e.point.clone()
 
-    // Clamp to island radius
     const dist = Math.sqrt(point.x ** 2 + point.z ** 2)
-    if (dist > 14) return // Click outside island — ignore
+    if (dist > ISLAND_RADIUS) return
 
-    point.y = 2
+    point.y = GROUND_Y
     useWorld.getState().setCharacterTarget(point)
 
-    // Spawn a pulse ring
     const id = Date.now()
-    setRings((prev) => [...prev.slice(-4), { id, pos: point }])
-
-    // Remove after 1s
-    setTimeout(() => {
-      setRings((prev) => prev.filter((r) => r.id !== id))
-    }, 1000)
+    setRings((prev) => [...prev.slice(-3), { id, pos: point }])
+    setTimeout(() => setRings((prev) => prev.filter((r) => r.id !== id)), 900)
   }, [])
 
   return (
     <>
-      {/* Invisible ground collider for raycasting */}
       <mesh
-        position={[0, 1.8, 0]}
+        position={[0, GROUND_Y, 0]}
         rotation={[-Math.PI / 2, 0, 0]}
         onClick={handleClick}
         visible={false}
       >
-        <circleGeometry args={[15, 32]} />
+        <circleGeometry args={[ISLAND_RADIUS + 1, 48]} />
         <meshBasicMaterial transparent opacity={0} />
       </mesh>
-
-      {/* Pulse rings */}
       {rings.map((r) => (
         <PulseRing key={r.id} position={r.pos} />
       ))}
@@ -56,6 +55,7 @@ function ClickGround() {
   )
 }
 
+/* ── Camera controller ───────────────────────────────────────── */
 function CameraController() {
   const mode = useWorld(state => state.mode)
   const isMoving = useWorld(state => state.isMoving)
@@ -64,41 +64,16 @@ function CameraController() {
   const idleTimer = useRef(0)
 
   useEffect(() => {
+    if (!controlsRef.current) return
     if (mode === 'contact') {
-      if (controlsRef.current) {
-        controlsRef.current.enabled = false
-        controlsRef.current.autoRotate = false
-      }
-      gsap.to(camera.position, {
-        x: -7,
-        y: 3.5,
-        z: 7,
-        duration: 1.2,
-        ease: 'power2.inOut'
-      })
-      gsap.to(controlsRef.current.target, {
-        x: -10,
-        y: 2.5,
-        z: 10,
-        duration: 1.2,
-        ease: 'power2.inOut'
-      })
+      controlsRef.current.enabled = false
+      controlsRef.current.autoRotate = false
+      gsap.to(camera.position, { x: -7, y: 5, z: 7, duration: 1.2, ease: 'power2.inOut' })
+      gsap.to(controlsRef.current.target, { x: -10, y: GROUND_Y + 1, z: 10, duration: 1.2, ease: 'power2.inOut' })
     } else {
-      if (controlsRef.current) controlsRef.current.enabled = true
-      gsap.to(camera.position, {
-        x: 18,
-        y: 14,
-        z: 18,
-        duration: 1.2,
-        ease: 'power2.inOut'
-      })
-      gsap.to(controlsRef.current.target, {
-        x: 0,
-        y: 2,
-        z: 0,
-        duration: 1.2,
-        ease: 'power2.inOut'
-      })
+      controlsRef.current.enabled = true
+      gsap.to(camera.position, { x: 18, y: 14, z: 18, duration: 1.2, ease: 'power2.inOut' })
+      gsap.to(controlsRef.current.target, { x: 0, y: GROUND_Y, z: 0, duration: 1.2, ease: 'power2.inOut' })
     }
   }, [mode, camera])
 
@@ -111,9 +86,7 @@ function CameraController() {
       }
     } else {
       idleTimer.current = 0
-      if (controlsRef.current && controlsRef.current.autoRotate) {
-        controlsRef.current.autoRotate = false
-      }
+      if (controlsRef.current?.autoRotate) controlsRef.current.autoRotate = false
     }
   })
 
@@ -127,38 +100,29 @@ function CameraController() {
       maxPolarAngle={Math.PI * 0.45}
       enableDamping
       dampingFactor={0.05}
-      target={[0, 2, 0]}
+      target={[0, GROUND_Y, 0]}
     />
   )
 }
 
-import WelcomeArch from './landmarks/WelcomeArch'
-import Library from './landmarks/Library'
-import DoorstepCulDeSac from './landmarks/DoorstepCulDeSac'
-import PenGarden from './landmarks/PenGarden'
-import DirectorsCut from './landmarks/DirectorsCut'
-import ViralShrine from './landmarks/ViralShrine'
-
+/* ── World canvas ────────────────────────────────────────────── */
 export default function World() {
+  // All landmarks placed at GROUND_Y on the XZ plane
+  const G = GROUND_Y
+
   return (
     <Canvas
-      camera={{
-        position: [18, 14, 18],
-        fov: 45,
-        near: 0.1,
-        far: 200,
-      }}
+      camera={{ position: [18, 14, 18], fov: 45, near: 0.1, far: 200 }}
       shadows
       gl={{ antialias: true, alpha: false }}
       style={{ width: '100%', height: '100%' }}
     >
       <SkyDome />
 
-      {/* Warm golden-hour lighting */}
-      <ambientLight intensity={0.4} color="#FFD56B" />
+      <ambientLight intensity={0.5} color="#FFD56B" />
       <directionalLight
         position={[15, 20, 10]}
-        intensity={1.6}
+        intensity={1.8}
         color="#FF8A5B"
         castShadow
         shadow-mapSize-width={2048}
@@ -168,26 +132,23 @@ export default function World() {
         shadow-camera-top={25}
         shadow-camera-bottom={-25}
       />
-      <directionalLight
-        position={[-10, 8, -10]}
-        intensity={0.3}
-        color="#7B8CDE"
-      />
+      <directionalLight position={[-10, 8, -10]} intensity={0.35} color="#7B8CDE" />
+      {/* Hemisphere for softer fill */}
+      <hemisphereLight args={['#FF8A5B', '#6BAA75', 0.3]} />
 
       <Island />
       <Character />
       <ClickGround />
       <Particles />
-      
-      {/* Landmarks */}
-      <WelcomeArch position={[0, 0, 0]} />
-      <Library position={[-8, 0, -8]} />
-      <DoorstepCulDeSac position={[10, 0, 0]} />
-      <PenGarden position={[8, 0, 8]} />
-      <DirectorsCut position={[-5, 0, 10]} />
-      <ViralShrine position={[0, 0, -11]} />
-      
-      <PhoneBooth position={[-10, 0, 10]} />
+
+      {/* Landmarks — all Y = GROUND_Y so they sit on the surface */}
+      <WelcomeArch    position={[0, G, 0]} />
+      <Library        position={[-8, G, -7]} />
+      <DoorstepCulDeSac position={[9, G, 0]} />
+      <PenGarden      position={[7, G, 7]} />
+      <DirectorsCut   position={[-4, G, 8]} />
+      <ViralShrine    position={[0, G, -10]} />
+      <PhoneBooth     position={[-9, G, 8]} />
 
       <CameraController />
     </Canvas>

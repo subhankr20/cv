@@ -1,28 +1,24 @@
 import { useFrame } from '@react-three/fiber'
 import { useWorld } from '@/store/useWorld'
-import * as THREE from 'three'
 
-export function useLandmarkProximity(id: string, position: THREE.Vector3 | [number, number, number], radius: number = 3) {
-  const pos = Array.isArray(position) ? new THREE.Vector3(...position) : position
-
+/**
+ * Triggers a panel when the character is within `radius` units on the XZ plane.
+ * Uses XZ-only distance so Y differences don't break proximity.
+ */
+export function useLandmarkProximity(id: string, position: [number, number, number], radius: number = 4) {
   useFrame(() => {
-    const characterPos = useWorld.getState().characterPos
-    const activePanel = useWorld.getState().activePanel
-    const mode = useWorld.getState().mode
+    const { characterPos, activePanel, mode } = useWorld.getState()
+    if (mode !== 'explore') return
 
-    // Don't trigger proximity changes while in contact modal or other modes
-    if (mode !== 'explore') return 
+    // XZ-only distance
+    const dx = characterPos.x - position[0]
+    const dz = characterPos.z - position[2]
+    const dist = Math.sqrt(dx * dx + dz * dz)
 
-    const dist = characterPos.distanceTo(pos)
-    
     if (dist < radius) {
-      if (activePanel !== id) {
-        useWorld.getState().setActivePanel(id)
-      }
+      if (activePanel !== id) useWorld.getState().setActivePanel(id)
     } else {
-      if (activePanel === id) {
-        useWorld.getState().setActivePanel(null)
-      }
+      if (activePanel === id) useWorld.getState().setActivePanel(null)
     }
   })
 }
