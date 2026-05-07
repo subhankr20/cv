@@ -1,8 +1,9 @@
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useWorld } from '@/store/useWorld'
-import { GROUND_Y } from '@/constants'
+import { useKeyboard } from '@/hooks/useKeyboard'
+import { GROUND_Y, ISLAND_RADIUS } from '@/constants'
 
 const SPEED = 3.5
 const ARRIVAL_THRESHOLD = 0.4
@@ -10,48 +11,88 @@ const ARRIVAL_THRESHOLD = 0.4
 export default function Character() {
   const groupRef = useRef<THREE.Group>(null)
   const shadowRef = useRef<THREE.Mesh>(null)
-  const { characterTarget, isMoving, setCharacterPos, setIsMoving, setCharacterTarget } = useWorld()
   const bobPhase = useRef(0)
+  const keys = useKeyboard()
 
   useFrame((_, delta) => {
     if (!groupRef.current) return
-
+    const store = useWorld.getState()
     const pos = groupRef.current.position
 
-    if (characterTarget && isMoving) {
-      const dir = new THREE.Vector3()
-        .subVectors(characterTarget, pos)
-        .setY(0) // Only move on XZ plane
+    // ─── Keyboard movement (overrides click-to-move) ────────────
+    const dir = new THREE.Vector3()
+    const k = keys.current
+    if (k.has('ArrowUp')    || k.has('KeyW')) dir.z -= 1
+    if (k.has('ArrowDown')  || k.has('KeyS')) dir.z += 1
+    if (k.has('ArrowLeft')  || k.has('KeyA')) dir.x -= 1
+    if (k.has('ArrowRight') || k.has('KeyD')) dir.x += 1
 
-      const distance = dir.length()
+    const hasKeyboard = dir.lengthSq() > 0
 
-      if (distance < ARRIVAL_THRESHOLD) {
-        setIsMoving(false)
-        setCharacterTarget(null as unknown as THREE.Vector3)
-        return
-      }
-
+    if (hasKeyboard) {
       dir.normalize()
 
-      const step = Math.min(SPEED * delta, distance)
-      pos.x += dir.x * step
-      pos.z += dir.z * step
+      const nextX = pos.x + dir.x * SPEED * delta
+      const nextZ = pos.z + dir.z * SPEED * delta
+      const dist = Math.sqrt(nextX * nextX + nextZ * nextZ)
+
+      // Clamp to island
+      if (dist < ISLAND_RADIUS) {
+        pos.x = nextX
+        pos.z = nextZ
+      }
+
       bobPhase.current += delta
       pos.y = GROUND_Y + Math.sin(bobPhase.current * 10) * 0.06
 
-      // Face direction of movement
+      // Face direction
       const angle = Math.atan2(dir.x, dir.z)
       const targetQ = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, angle, 0))
       groupRef.current.quaternion.slerp(targetQ, 0.15)
 
-      setCharacterPos(pos.clone())
-    } else {
-      // Gentle idle bob
-      bobPhase.current += delta * 0.5
-      pos.y = GROUND_Y + Math.sin(bobPhase.current * 2) * 0.03
+      store.setCharacterPos(pos.clone())
+      if (!store.isMoving) store.setIsMoving(true)
+      // Cancel any pending click target
+      if (store.characterTarget) store.setIsMoving(true)
+      return
     }
 
-    // Keep shadow disc on ground
+    // ─── Click-to-move ──────────────────────────────────────────
+    const { characterTarget, isMoving } = store
+
+    if (characterTarget && isMoving) {
+      const moveDir = new THREE.Vector3()
+        .subVectors(characterTarget, pos)
+        .setY(0)
+
+      const distance = moveDir.length()
+
+      if (distance < ARRIVAL_THRESHOLD) {
+        store.setIsMoving(false)
+        store.setCharacterTarget(null as unknown as THREE.Vector3)
+        return
+      }
+
+      moveDir.normalize()
+      const step = Math.min(SPEED * delta, distance)
+      pos.x += moveDir.x * step
+      pos.z += moveDir.z * step
+      bobPhase.current += delta
+      pos.y = GROUND_Y + Math.sin(bobPhase.current * 10) * 0.06
+
+      const angle = Math.atan2(moveDir.x, moveDir.z)
+      const targetQ = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, angle, 0))
+      groupRef.current.quaternion.slerp(targetQ, 0.15)
+
+      store.setCharacterPos(pos.clone())
+    } else {
+      // Idle bob
+      bobPhase.current += delta * 0.5
+      pos.y = GROUND_Y + Math.sin(bobPhase.current * 2) * 0.03
+      if (store.isMoving) store.setIsMoving(false)
+    }
+
+    // Shadow disc
     if (shadowRef.current) {
       shadowRef.current.position.set(pos.x, GROUND_Y + 0.01, pos.z)
     }
@@ -60,7 +101,7 @@ export default function Character() {
   return (
     <>
       <group ref={groupRef} position={[0, GROUND_Y, 0]} scale={1.3}>
-        {/* Shadow / selection disc */}
+        {/* Shadow disc */}
         <mesh position={[0, 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <circleGeometry args={[0.5, 24]} />
           <meshBasicMaterial color="#1A1A1A" transparent opacity={0.3} />
@@ -107,7 +148,7 @@ export default function Character() {
           <meshToonMaterial color="#FFD56B" />
         </mesh>
 
-        {/* Clipboard in right hand */}
+        {/* Clipboard */}
         <mesh position={[0.38, 0.4, 0.12]} rotation={[0.4, 0, -0.15]}>
           <boxGeometry args={[0.22, 0.3, 0.02]} />
           <meshToonMaterial color="#C4B8A8" />
@@ -138,7 +179,6 @@ export default function Character() {
           <sphereGeometry args={[0.04, 8, 8]} />
           <meshBasicMaterial color="#FFF8EC" />
         </mesh>
-        {/* Pupils */}
         <mesh position={[-0.09, 1.15, 0.285]}>
           <sphereGeometry args={[0.022, 8, 8]} />
           <meshBasicMaterial color="#1A1A1A" />
@@ -159,7 +199,6 @@ export default function Character() {
           <torusGeometry args={[0.22, 0.025, 8, 16]} />
           <meshToonMaterial color="#333" />
         </mesh>
-        {/* Headset mic */}
         <mesh position={[-0.22, 1.1, 0.12]} rotation={[0.5, 0, 0]}>
           <cylinderGeometry args={[0.015, 0.015, 0.15, 6]} />
           <meshToonMaterial color="#333" />
@@ -169,14 +208,14 @@ export default function Character() {
           <meshToonMaterial color="#333" />
         </mesh>
 
-        {/* Selection glow ring */}
+        {/* Glow ring */}
         <mesh position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <ringGeometry args={[0.45, 0.55, 24]} />
           <meshBasicMaterial color="#A8E6CF" transparent opacity={0.25} side={THREE.DoubleSide} />
         </mesh>
       </group>
 
-      {/* External shadow (stays on ground plane regardless of bob) */}
+      {/* External shadow */}
       <mesh ref={shadowRef} position={[0, GROUND_Y + 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <circleGeometry args={[0.6, 24]} />
         <meshBasicMaterial color="#1A1A1A" transparent opacity={0.2} />

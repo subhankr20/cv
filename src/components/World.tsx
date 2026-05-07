@@ -15,6 +15,7 @@ import PenGarden from './landmarks/PenGarden'
 import DirectorsCut from './landmarks/DirectorsCut'
 import ViralShrine from './landmarks/ViralShrine'
 import PhoneBooth from './landmarks/PhoneBooth'
+import TreasureChest from './landmarks/TreasureChest'
 import { useWorld } from '@/store/useWorld'
 import { GROUND_Y, ISLAND_RADIUS } from '@/constants'
 
@@ -149,6 +150,7 @@ export default function World() {
       <DirectorsCut   position={[-4, G, 8]} />
       <ViralShrine    position={[0, G, -10]} />
       <PhoneBooth     position={[-9, G, 8]} />
+      <TreasureChest  position={[5, G, -5]} />
 
       <CameraController />
     </Canvas>

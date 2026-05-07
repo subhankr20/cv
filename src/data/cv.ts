@@ -65,7 +65,7 @@ export const CV_DATA = {
 export const LANDMARKS: Record<string, { icon: string; title: string; subtitle: string; body: string; stats: string[] }> = {
   welcome_arch: {
     icon: "🏛️",
-    title: "Welcome to Patra World",
+    title: "Welcome to Nova World",
     subtitle: "Click anywhere to walk. Discover the résumé.",
     body: "A floating island where every landmark is a chapter of my career. Walk to each one to uncover my story.",
     stats: [],
@@ -104,6 +104,13 @@ export const LANDMARKS: Record<string, { icon: string; title: string; subtitle: 
     subtitle: "Social Media Content Manager",
     body: "Created viral content resulting in 2.3M cumulative views across two videos. Collaborated with meme creators and influencers. Established a notable presence in the online meme community.",
     stats: ["2.3M Views", "2 Viral Videos", "Influencer Collabs"],
+  },
+  treasure_chest: {
+    icon: "💎",
+    title: "HIRE ME!",
+    subtitle: "Ready for my next challenge",
+    body: "I bring energy, persistence, and real results. 20% sales growth. 2.3M viral views. Creative storytelling meets conversion-driven strategy. Let's talk → patrasubhankar997@gmail.com",
+    stats: ["+20% Sales", "2.3M Views", "300+ Pitches", "BBA Marketing"],
   },
   phone_booth: {
     icon: "📞",

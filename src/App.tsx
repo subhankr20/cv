@@ -26,7 +26,7 @@ export default function App() {
       {/* Title + Plain CV button */}
       <div className="fixed top-6 left-6 z-50 pointer-events-none flex flex-col gap-2">
         <h1 className="font-display text-2xl text-ui-text drop-shadow-lg tracking-wider">
-          PATRA WORLD
+          NOVA WORLD
         </h1>
         <button
           onClick={() => setShowPlainCV(true)}
