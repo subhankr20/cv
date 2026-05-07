@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
-import { Canvas, useThree } from '@react-three/fiber'
+import { Canvas, useThree, useFrame } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
 import gsap from 'gsap'
@@ -58,12 +58,17 @@ function ClickGround() {
 
 function CameraController() {
   const mode = useWorld(state => state.mode)
+  const isMoving = useWorld(state => state.isMoving)
   const controlsRef = useRef<any>(null)
   const { camera } = useThree()
+  const idleTimer = useRef(0)
 
   useEffect(() => {
     if (mode === 'contact') {
-      if (controlsRef.current) controlsRef.current.enabled = false
+      if (controlsRef.current) {
+        controlsRef.current.enabled = false
+        controlsRef.current.autoRotate = false
+      }
       gsap.to(camera.position, {
         x: -7,
         y: 3.5,
@@ -96,6 +101,21 @@ function CameraController() {
       })
     }
   }, [mode, camera])
+
+  useFrame((_, delta) => {
+    if (mode === 'explore' && !isMoving) {
+      idleTimer.current += delta
+      if (idleTimer.current > 8 && controlsRef.current && !controlsRef.current.autoRotate) {
+        controlsRef.current.autoRotate = true
+        controlsRef.current.autoRotateSpeed = 0.5
+      }
+    } else {
+      idleTimer.current = 0
+      if (controlsRef.current && controlsRef.current.autoRotate) {
+        controlsRef.current.autoRotate = false
+      }
+    }
+  })
 
   return (
     <OrbitControls
