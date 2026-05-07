@@ -12,8 +12,8 @@ export default function App() {
 
   return (
     <div className="w-full h-full relative">
-      <LoadingScreen onLoaded={() => console.log('World loaded')} />
-      
+      <LoadingScreen />
+
       <Suspense fallback={null}>
         <World />
       </Suspense>
@@ -23,12 +23,12 @@ export default function App() {
       <ContactModal />
       <SoundToggle />
 
-      {/* Title overlay */}
+      {/* Title + Plain CV button */}
       <div className="fixed top-6 left-6 z-50 pointer-events-none flex flex-col gap-2">
         <h1 className="font-display text-2xl text-ui-text drop-shadow-lg tracking-wider">
           PATRA WORLD
         </h1>
-        <button 
+        <button
           onClick={() => setShowPlainCV(true)}
           className="pointer-events-auto self-start px-3 py-1 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded border border-white/20 text-xs font-mono transition-colors"
         >
