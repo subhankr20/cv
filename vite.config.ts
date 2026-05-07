@@ -7,7 +7,7 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url))
 export default defineConfig({
   plugins: [react()],
   base: '/cv/',
-  build: { outDir: 'dist' },
+  build: { outDir: 'docs' },
   resolve: {
     alias: {
       '@': __dirname + 'src',
