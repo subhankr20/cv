@@ -112,6 +112,13 @@ function CameraController() {
   )
 }
 
+import WelcomeArch from './landmarks/WelcomeArch'
+import Library from './landmarks/Library'
+import DoorstepCulDeSac from './landmarks/DoorstepCulDeSac'
+import PenGarden from './landmarks/PenGarden'
+import DirectorsCut from './landmarks/DirectorsCut'
+import ViralShrine from './landmarks/ViralShrine'
+
 export default function World() {
   return (
     <Canvas
@@ -153,6 +160,13 @@ export default function World() {
       <Particles />
       
       {/* Landmarks */}
+      <WelcomeArch position={[0, 0, 0]} />
+      <Library position={[-8, 0, -8]} />
+      <DoorstepCulDeSac position={[10, 0, 0]} />
+      <PenGarden position={[8, 0, 8]} />
+      <DirectorsCut position={[-5, 0, 10]} />
+      <ViralShrine position={[0, 0, -11]} />
+      
       <PhoneBooth position={[-10, 0, 10]} />
 
       <CameraController />

@@ -29,11 +29,53 @@ export const CV_DATA = {
 };
 
 export const LANDMARKS = {
+  welcome_arch: {
+    icon: "🏛️",
+    title: "Welcome",
+    subtitle: "Patra World",
+    body: "Explore my professional journey. Walk near landmarks to reveal chapters.",
+    stats: []
+  },
+  library: {
+    icon: "📚",
+    title: "Education",
+    subtitle: "Academic Foundation",
+    body: "BBA in Marketing & Finance from SMIT. Building the analytical and strategic bedrock for high-stakes sales.",
+    stats: ["2021–2025", "SMIT", "DPS Siliguri"]
+  },
+  doorstep: {
+    icon: "🏘️",
+    title: "Zeomax R.O. Systems",
+    subtitle: "Marketing Associate",
+    body: "Driving field sales and product demonstrations. Mastered the art of the pitch and closing deals in competitive markets.",
+    stats: ["30/day", "+20% lift", "300+ pitches"]
+  },
+  pen_garden: {
+    icon: "✍️",
+    title: "My Digital.io",
+    subtitle: "AI Content & Copywriter",
+    body: "Crafted high-conversion copy and SEO-optimized content leveraging AI tools to scale digital presence.",
+    stats: ["SEO", "Copywriting", "CTR"]
+  },
+  directors_cut: {
+    icon: "🎬",
+    title: "Hanwong Int.",
+    subtitle: "Video Creator & Editor",
+    body: "Freelance post-production and storytelling. Transforming raw footage into engaging visual narratives.",
+    stats: ["Premiere Pro", "Storytelling"]
+  },
+  viral_shrine: {
+    icon: "📱",
+    title: "Viral Success",
+    subtitle: "Social Media Manager",
+    body: "Engineered viral content campaigns that captured massive organic reach.",
+    stats: ["2.3M Views", "2 Viral Hits"]
+  },
   phone_booth: {
     icon: "📞",
     title: "Get In Touch",
     subtitle: "The Final Conversion",
-    body: "Step inside to connect.",
+    body: "Step inside to connect and download my complete CV.",
     stats: []
   }
 };
