@@ -78,7 +78,6 @@ export default function ViralShrine({ position }: { position: [number, number, n
         position={[0, 5.5, 0]}
         fontSize={0.8}
         color="#FFF8EC"
-        font="https://fonts.gstatic.com/s/jetbrainsmono/v18/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwI.woff"
         anchorX="center"
         anchorY="middle"
         outlineWidth={0.02}
