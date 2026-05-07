@@ -65,7 +65,7 @@ export const CV_DATA = {
 export const LANDMARKS: Record<string, { icon: string; title: string; subtitle: string; body: string; stats: string[] }> = {
   welcome_arch: {
     icon: "🏛️",
-    title: "Welcome to Nova World",
+    title: "Welcome to Subhankar World",
     subtitle: "Click anywhere to walk. Discover the résumé.",
     body: "A floating island where every landmark is a chapter of my career. Walk to each one to uncover my story.",
     stats: [],

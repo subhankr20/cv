@@ -53,7 +53,7 @@ export default function LoadingScreen() {
         }}
       />
       <h1 className="font-display text-5xl text-ui-text tracking-widest mb-3 drop-shadow-lg">
-        NOVA WORLD
+        SUBHANKAR WORLD
       </h1>
       <p className="font-mono text-sm text-sun-core/80 mb-10 tracking-wider">
         loading the island...
